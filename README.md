@@ -91,7 +91,7 @@ my-app/
 ## 🛠️ Usage
 
 ```bash
-node ./create-react.js
+node ./create-clean-react.js
 ```
 
 You can run the above script directly or customize it to fit your needs.
