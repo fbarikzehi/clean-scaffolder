@@ -20,7 +20,7 @@ Whether you're building with React, Go, Python, Node.js, Rust, or any other tech
 
 ## 📦 What’s Inside?
 
-This toolkit includes CLI and shell scripts like:
+This toolkit includes CLI/shell scripts:
 
 * `create-clean-react.js` — Vite(NextJs) + React + TypeScript + Tailwind + Zustand + shadcn-ui + i18next
 * *...and many more (or contribute your own!)*
