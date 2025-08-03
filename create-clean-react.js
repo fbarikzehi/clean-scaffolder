@@ -559,13 +559,39 @@ async function main() {
         }
 
         if (dependencies.length > 0) {
-            colorLog('yellow', `\n📦 Installing feature dependencies: ${dependencies.join(', ')}`);
-            safeExec(`${packageManager} add ${dependencies.join(' ')}`);
+            colorLog('yellow', `\n📦 Installing feature dependencies...`);
+            const chunks = [];
+            for (let i = 0; i < dependencies.length; i += 10) {
+                chunks.push(dependencies.slice(i, i + 10));
+            }
+
+            for (const chunk of chunks) {
+                try {
+                    colorLog('blue', `Installing: ${chunk.join(', ')}`);
+                    safeExec(`${packageManager} add ${chunk.join(' ')}`);
+                } catch (err) {
+                    colorLog('red', `Failed to install ${chunk.join(', ')}: ${err.message}`);
+                    throw err;
+                }
+            }
         }
 
         if (devDependencies.length > 0) {
-            colorLog('yellow', `\n📦 Installing dev dependencies: ${devDependencies.join(', ')}`);
-            safeExec(`${packageManager} add -D ${devDependencies.join(' ')}`);
+            colorLog('yellow', `\n📦 Installing dev dependencies...`);
+            const chunks = [];
+            for (let i = 0; i < devDependencies.length; i += 10) {
+                chunks.push(devDependencies.slice(i, i + 10));
+            }
+
+            for (const chunk of chunks) {
+                try {
+                    colorLog('blue', `Installing: ${chunk.join(', ')}`);
+                    safeExec(`${packageManager} add -D ${chunk.join(' ')}`);
+                } catch (err) {
+                    colorLog('red', `Failed to install ${chunk.join(', ')}: ${err.message}`);
+                    throw err;
+                }
+            }
         }
 
         // Step 4: Create folder structure
@@ -601,11 +627,21 @@ async function main() {
 
         if (features.includes('tailwind')) {
             colorLog('yellow', '\n🎨 Configuring Tailwind CSS...');
-            safeExec('npx tailwindcss init -p');
+            // Create Tailwind config manually since dependencies are already installed
             createFileWithContent(
                 path.join(projectPath, 'tailwind.config.ts'),
                 templates.tailwind,
                 'Tailwind config'
+            );
+            createFileWithContent(
+                path.join(projectPath, 'postcss.config.js'),
+                `export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}`,
+                'PostCSS config'
             );
             createFileWithContent(
                 path.join(projectPath, 'src/index.css'),
@@ -745,10 +781,12 @@ async function main() {
 
         // Cleanup on failure
         try {
-            const projectPath = path.resolve(process.cwd(), answers?.projectName || 'failed-project');
-            if (fs.existsSync(projectPath)) {
-                colorLog('yellow', '🧹 Cleaning up failed installation...');
-                safeDelete(projectPath, 'failed project directory');
+            if (typeof answers !== 'undefined' && answers.projectName) {
+                const projectPath = path.resolve(process.cwd(), answers.projectName);
+                if (fs.existsSync(projectPath)) {
+                    colorLog('yellow', '🧹 Cleaning up failed installation...');
+                    safeDelete(projectPath, 'failed project directory');
+                }
             }
         } catch (cleanupErr) {
             colorLog('red', `Failed to cleanup: ${cleanupErr.message}`);
