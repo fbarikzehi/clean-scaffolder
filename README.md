@@ -104,8 +104,8 @@ We welcome contributions of all kinds!
 
 You can help by:
 
-* 📜 Adding new scaffolds (any language or framework)
-* 🛠️ Improving existing scripts
+* 📜 Adding new scaffolders (any language,framework or tools)
+* 🛠️ Improving existing scripts (add new features)
 * 📝 Writing documentation or usage guides
 
 > 📖 See `CONTRIBUTING.md` for more info
